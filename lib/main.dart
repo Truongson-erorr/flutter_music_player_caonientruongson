@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'screens/home_screen.dart';
 import 'providers/audio_provider.dart';
+import 'providers/playlist_provider.dart';
 import 'services/audio_player_service.dart';
 import 'services/storage_service.dart';
 
@@ -24,7 +25,11 @@ class MyApp extends StatelessWidget {
         Provider<StorageService>(
           create: (_) => StorageService(),
         ),
-        
+
+        ChangeNotifierProvider<PlaylistProvider>(
+          create: (_) => PlaylistProvider(),
+        ),
+
         ChangeNotifierProvider<AudioProvider>(
           create: (context) => AudioProvider(
             context.read<AudioPlayerService>(),

@@ -5,8 +5,10 @@ import '../models/song_model.dart';
 import '../services/playlist_service.dart';
 import '../services/permission_service.dart';
 import '../providers/audio_provider.dart';
+import '../providers/playlist_provider.dart';
 import '../widgets/mini_player.dart';
 import '../widgets/song_tile.dart';
+import '../screens/settings_screen.dart';
 import '../screens/search_screen.dart';
 import '../screens/playlist_screen.dart';
 
@@ -58,6 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
         _filteredSongs = List.from(_songs);
         _sortSongs();
       });
+      
+      context.read<PlaylistProvider>().setAllSongs(_songs);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error loading songs: $e')),
@@ -163,10 +167,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => PlaylistScreen(
-                        playlistName: "My Playlist",
-                        songs: _myPlaylist,
-                      ),
+                      builder: (_) => const PlaylistScreen(),
+                    ),
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings, color: Colors.black),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SettingsScreen(),
                     ),
                   );
                 },
@@ -207,17 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
         return SongTile(
           song: song,
           onTap: () {
-            context.read<AudioProvider>().setPlaylist(_filteredSongs, index);
-          },
-          onAddToPlaylist: () {
-            setState(() {
-              if (!_myPlaylist.contains(song)) {
-                _myPlaylist.add(song);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${song.title} added to playlist')),
-                );
-              }
-            });
+            context.read<AudioProvider>().setPlaylist(
+              _filteredSongs,
+              index,
+            );
           },
         );
       },

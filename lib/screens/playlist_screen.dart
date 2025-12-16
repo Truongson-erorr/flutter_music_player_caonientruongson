@@ -1,136 +1,147 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
-import '../models/song_model.dart';
-import '../providers/audio_provider.dart';
-import '../widgets/song_tile.dart';
-import '../widgets/mini_player.dart';
+import '../providers/playlist_provider.dart';
+import '../screens/playlist_detail_screen.dart';
 
-class PlaylistScreen extends StatefulWidget {
-  final String playlistName;
-  final List<SongModel> songs;
-
-  const PlaylistScreen({
-    super.key,
-    required this.playlistName,
-    required this.songs,
-  });
-
-  @override
-  State<PlaylistScreen> createState() => _PlaylistScreenState();
-}
-
-class _PlaylistScreenState extends State<PlaylistScreen> {
-  late List<SongModel> _playlistSongs;
-
-  @override
-  void initState() {
-    super.initState();
-    _playlistSongs = List.from(widget.songs);
-  }
-
-  void _removeSong(int index) {
-    setState(() {
-      _playlistSongs.removeAt(index);
-    });
-  }
-
-  Future<void> _exportPdf() async {
-    if (_playlistSongs.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Playlist is empty!')),
-      );
-      return;
-    }
-
-    final pdf = pw.Document();
-
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                widget.playlistName,
-                style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
-              ),
-              pw.SizedBox(height: 16),
-              pw.ListView.builder(
-                itemCount: _playlistSongs.length,
-                itemBuilder: (context, index) {
-                  final song = _playlistSongs[index];
-                  return pw.Padding(
-                    padding: const pw.EdgeInsets.symmetric(vertical: 4),
-                    child: pw.Text('${index + 1}. ${song.title} - ${song.artist}'),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      ),
-    );
-
-    await Printing.layoutPdf(
-      onLayout: (format) async => pdf.save(),
-    );
-  }
+class PlaylistScreen extends StatelessWidget {
+  const PlaylistScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final playlistProvider = context.watch<PlaylistProvider>();
+
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+        title: const Text(
+          'Playlist của tôi',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        title: Text(
-          widget.playlistName,
-          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.black,
+        child: const Icon(Icons.add, color: Colors.white),
+        onPressed: () => _showCreatePlaylistDialog(context),
+      ),
+      body: playlistProvider.playlists.isEmpty
+          ? const Center(
+              child: Text(
+                'Chưa có playlist nào',
+                style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+            )
+          : ListView.builder(
+              itemCount: playlistProvider.playlists.length,
+              itemBuilder: (context, index) {
+                final playlist = playlistProvider.playlists[index];
+                return Card(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  child: ListTile(
+                    leading: const Icon(Icons.queue_music),
+                    title: Text(playlist.name),
+                    subtitle:
+                        Text('${playlist.songIds.length} bài hát'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PlaylistDetailScreen(
+                            playlistId: playlist.id,
+                          ),
+                        ),
+                      );
+                    },
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'rename') {
+                          _showRenameDialog(context, playlist.id, playlist.name);
+                        } else if (value == 'delete') {
+                          playlistProvider.deletePlaylist(playlist.id);
+                        }
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(
+                          value: 'rename',
+                          child: Text('Đổi tên'),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text(
+                            'Xoá',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+
+  void _showCreatePlaylistDialog(BuildContext context) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Tạo playlist mới'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'Nhập tên playlist',
+          ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.picture_as_pdf, color: Colors.black),
-            tooltip: 'Export PDF',
-            onPressed: _exportPdf,
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Huỷ'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.trim().isEmpty) return;
+              context
+                  .read<PlaylistProvider>()
+                  .createPlaylist(controller.text.trim());
+              Navigator.pop(context);
+            },
+            child: const Text('Tạo'),
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _playlistSongs.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No songs in this playlist',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: _playlistSongs.length,
-                    itemBuilder: (context, index) {
-                      final song = _playlistSongs[index];
-                      return SongTile(
-                        song: song,
-                        onTap: () {
-                          context.read<AudioProvider>().setPlaylist(_playlistSongs, index);
-                        },
-                        onRemoveFromPlaylist: () => _removeSong(index),
-                        isInPlaylist: true,
-                      );
-                    },
-                  ),
+    );
+  }
+
+  void _showRenameDialog(
+      BuildContext context, String id, String oldName) {
+    final controller = TextEditingController(text: oldName);
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Đổi tên playlist'),
+        content: TextField(
+          controller: controller,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Huỷ'),
           ),
-          Consumer<AudioProvider>(
-            builder: (context, provider, child) {
-              if (provider.currentSong == null) return const SizedBox.shrink();
-              return const MiniPlayer(); 
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.trim().isEmpty) return;
+              context
+                  .read<PlaylistProvider>()
+                  .renamePlaylist(id, controller.text.trim());
+              Navigator.pop(context);
             },
+            child: const Text('Lưu'),
           ),
         ],
       ),
