@@ -4,10 +4,10 @@ import '../models/song_model.dart';
 
 class SongTile extends StatelessWidget {
   final SongModel song;
-  final VoidCallback? onTap; // nullable, optional
-  final VoidCallback? onAddToPlaylist; // callback khi bấm Add to playlist
-  final VoidCallback? onRemoveFromPlaylist; // callback khi bấm Remove from playlist
-  final bool isInPlaylist; // flag để biết đang ở màn playlist
+  final VoidCallback? onTap; 
+  final VoidCallback? onAddToPlaylist; 
+  final VoidCallback? onRemoveFromPlaylist; 
+  final bool isInPlaylist; 
 
   const SongTile({
     super.key,
@@ -15,7 +15,7 @@ class SongTile extends StatelessWidget {
     this.onTap,
     this.onAddToPlaylist,
     this.onRemoveFromPlaylist,
-    this.isInPlaylist = false, // mặc định false
+    this.isInPlaylist = false, 
   });
 
   @override

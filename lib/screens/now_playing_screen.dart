@@ -12,7 +12,7 @@ class NowPlayingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // nền sáng
+      backgroundColor: Colors.white, 
       body: Consumer<AudioProvider>(
         builder: (context, provider, child) {
           final song = provider.currentSong;
@@ -86,7 +86,6 @@ class NowPlayingScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.more_vert, color: Colors.black87),
             onPressed: () {
-              // Show options menu
             },
           ),
         ],

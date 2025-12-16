@@ -14,7 +14,6 @@ class PlayerControls extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Secondary controls (shuffle, repeat)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -23,7 +22,7 @@ class PlayerControls extends StatelessWidget {
                 Icons.shuffle,
                 color: provider.isShuffleEnabled
                     ? const Color(0xFF1DB954)
-                    : Colors.grey[600], // nhạt hơn trên nền sáng
+                    : Colors.grey[600], 
               ),
               onPressed: provider.toggleShuffle,
             ),
@@ -31,17 +30,15 @@ class PlayerControls extends StatelessWidget {
             _buildRepeatButton(),
           ],
         ),
-
         const SizedBox(height: 20),
 
-        // Main controls
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
               icon: Icon(
                 Icons.skip_previous,
-                color: Colors.black87, // đổi sang đen để nổi trên nền trắng
+                color: Colors.black87,
                 size: 40,
               ),
               onPressed: provider.previous,
@@ -74,7 +71,7 @@ class PlayerControls extends StatelessWidget {
             IconButton(
               icon: Icon(
                 Icons.skip_next,
-                color: Colors.black87, // đen nổi trên nền trắng
+                color: Colors.black87, 
                 size: 40,
               ),
               onPressed: provider.next,
@@ -92,7 +89,7 @@ class PlayerControls extends StatelessWidget {
     switch (provider.loopMode) {
       case LoopMode.off:
         icon = Icons.repeat;
-        color = Colors.grey[600]!; // nhạt hơn trên nền trắng
+        color = Colors.grey[600]!; 
         break;
       case LoopMode.all:
         icon = Icons.repeat;

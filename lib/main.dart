@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Service providers
         Provider<AudioPlayerService>(
           create: (_) => AudioPlayerService(),
           dispose: (_, service) => service.dispose(),
@@ -25,8 +24,7 @@ class MyApp extends StatelessWidget {
         Provider<StorageService>(
           create: (_) => StorageService(),
         ),
-
-        // ChangeNotifier provider
+        
         ChangeNotifierProvider<AudioProvider>(
           create: (context) => AudioProvider(
             context.read<AudioPlayerService>(),

@@ -4,7 +4,6 @@ import '../models/song_model.dart';
 class PlaylistService {
   final oq.OnAudioQuery _audioQuery = oq.OnAudioQuery();
 
-  // Get all songs from device
   Future<List<SongModel>> getAllSongs() async {
     try {
       final List<oq.SongModel> audioList =
@@ -23,19 +22,16 @@ class PlaylistService {
     }
   }
 
-  // Get songs by artist
   Future<List<SongModel>> getSongsByArtist(String artist) async {
     final allSongs = await getAllSongs();
     return allSongs.where((song) => song.artist == artist).toList();
   }
 
-  // Get songs by album
   Future<List<SongModel>> getSongsByAlbum(String album) async {
     final allSongs = await getAllSongs();
     return allSongs.where((song) => song.album == album).toList();
   }
-
-  // Search songs
+  
   Future<List<SongModel>> searchSongs(String query) async {
     final allSongs = await getAllSongs();
     final lowerQuery = query.toLowerCase();

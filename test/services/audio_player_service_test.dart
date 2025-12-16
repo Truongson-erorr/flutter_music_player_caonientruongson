@@ -10,7 +10,6 @@ class AudioPlayerService {
 
   String? get currentSong => _playlist.isEmpty ? null : _playlist[_currentIndex];
 
-  // Streams
   Stream<Duration> get positionStream => _audioPlayer.positionStream;
   Stream<Duration?> get durationStream => _audioPlayer.durationStream;
   Stream<PlayerState> get playerStateStream => _audioPlayer.playerStateStream;
@@ -49,7 +48,6 @@ class AudioPlayerService {
   Future<void> setSpeed(double speed) async => await _audioPlayer.setSpeed(speed);
   Future<void> setLoopMode(LoopMode loopMode) async => await _audioPlayer.setLoopMode(loopMode);
 
-  // Playlist methods
   Future<void> setPlaylist(List<String> songs) async {
     _playlist = List.from(songs);
     _currentIndex = 0;

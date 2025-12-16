@@ -30,9 +30,9 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // nền trắng
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white, // AppBar trắng
+        backgroundColor: Colors.white, 
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
@@ -76,7 +76,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 final song = _results[index];
                 return GestureDetector(
                   onTap: () {
-                    // nếu muốn, có thể mở NowPlayingScreen tại đây
+
                   },
                   child: SongTile(
                     song: song,

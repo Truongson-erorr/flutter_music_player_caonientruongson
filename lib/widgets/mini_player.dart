@@ -21,10 +21,10 @@ class MiniPlayer extends StatelessWidget {
       child: Container(
         height: 80,
         decoration: BoxDecoration(
-          color: Colors.white, // nền trắng
+          color: Colors.white, 
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1), // bóng nhẹ
+              color: Colors.black.withOpacity(0.1),
               blurRadius: 8,
               offset: const Offset(0, -3),
             ),
@@ -37,7 +37,6 @@ class MiniPlayer extends StatelessWidget {
 
             return Column(
               children: [
-                // progress bar
                 StreamBuilder<PlaybackUiState>(
                   stream: provider.playbackStateStream,
                   initialData: provider.currentPlaybackState,
@@ -59,7 +58,6 @@ class MiniPlayer extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       children: [
-                        // album art
                         Container(
                           width: 50,
                           height: 50,
@@ -79,7 +77,6 @@ class MiniPlayer extends StatelessWidget {
                         ),
                         const SizedBox(width: 12),
 
-                        // title + artist
                         Expanded(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -107,7 +104,6 @@ class MiniPlayer extends StatelessWidget {
                           ),
                         ),
 
-                        // play/pause
                         StreamBuilder<bool>(
                           stream: provider.playingStream,
                           initialData: provider.isPlaying,
@@ -124,7 +120,6 @@ class MiniPlayer extends StatelessWidget {
                           },
                         ),
 
-                        // next
                         IconButton(
                           icon: const Icon(Icons.skip_next, color: Colors.black),
                           onPressed: provider.next,

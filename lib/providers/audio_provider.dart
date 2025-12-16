@@ -18,7 +18,6 @@ import '../models/playback_state_model.dart';
   _init();
   }
 
-  // Getters
     PlaybackUiState  get currentPlaybackState => PlaybackUiState (
     position: _audioService.currentPosition,
     duration: _audioService.currentDuration ?? Duration.zero,
@@ -39,7 +38,6 @@ import '../models/playback_state_model.dart';
   Stream<PlaybackUiState > get playbackStateStream =>
   _audioService.playbackStateStream;
 
-  // Initialize
   Future<void> _init() async {
   _isShuffleEnabled = await _storageService.getShuffleState();
   final repeatMode = await _storageService.getRepeatMode();
@@ -50,7 +48,6 @@ import '../models/playback_state_model.dart';
   await _audioService.setVolume(volume);
   }
 
-  // Set playlist
   Future<void> setPlaylist(List<SongModel> songs, int startIndex) async {
   _playlist = songs;
   _currentIndex = startIndex;
@@ -58,7 +55,6 @@ import '../models/playback_state_model.dart';
   notifyListeners();
   }
 
-  // Play song at index
   Future<void> _playSongAtIndex(int index) async {
   if (index < 0 || index >= _playlist.length) return;
 
@@ -72,7 +68,6 @@ import '../models/playback_state_model.dart';
   notifyListeners();
   }
 
-  // Play/Pause
   Future<void> playPause() async {
   if (_audioService.isPlaying) {
   await _audioService.pause();
@@ -82,7 +77,6 @@ import '../models/playback_state_model.dart';
   notifyListeners();
   }
 
-  // Next song
   Future<void> next() async {
   if (_isShuffleEnabled) {
   _currentIndex = _getRandomIndex();
@@ -92,7 +86,6 @@ import '../models/playback_state_model.dart';
   await _playSongAtIndex(_currentIndex);
   }
 
-  // Previous song
   Future<void> previous() async {
   if (_audioService.currentPosition.inSeconds > 3) {
   await _audioService.seek(Duration.zero);
@@ -106,19 +99,16 @@ import '../models/playback_state_model.dart';
   }
   }
 
-  // Seek
   Future<void> seek(Duration position) async {
   await _audioService.seek(position);
   }
 
-  // Toggle shuffle
   Future<void> toggleShuffle() async {
   _isShuffleEnabled = !_isShuffleEnabled;
   await _storageService.saveShuffleState(_isShuffleEnabled);
   notifyListeners();
   }
 
-  // Toggle repeat
   Future<void> toggleRepeat() async {
   switch (_loopMode) {
   case LoopMode.off:
@@ -137,14 +127,12 @@ import '../models/playback_state_model.dart';
   notifyListeners();
   }
 
-  // Set volume
   Future<void> setVolume(double volume) async {
   await _audioService.setVolume(volume);
   await _storageService.saveVolume(volume);
   notifyListeners();
   }
 
-  // Get random index
   int _getRandomIndex() {
   final random = DateTime.now().millisecondsSinceEpoch % _playlist.length;
   return random;
